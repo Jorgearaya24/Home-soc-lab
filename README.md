@@ -4,7 +4,7 @@ Proyecto personal creado desde cero para practicar habilidades de **SOC Analyst*
 
 ## Objetivo
 
-Simular actividad maliciosa en un entorno controlado, recopilar los eventos con Sysmon y analizarlos en Splunk para practicar detección e investigación de amenazas.
+Simulé actividad maliciosa en un entorno controlado, recopilar los eventos con Sysmon y analizarlos en Splunk para practicar detección e investigación de amenazas.
 
 ## Herramientas
 
