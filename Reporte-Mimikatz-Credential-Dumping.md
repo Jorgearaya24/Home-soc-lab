@@ -35,7 +35,7 @@ sekurlsa::logonpasswords
 **Usuario:** `SOC-VICTIM-WIN1\vboxuser`  
 **Proceso padre:** `C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe`
 
-![Ejecución de Mimikatz en PowerShell](images/mimikatz-ejecucion-powershell.png)
+![Ejecución de Mimikatz en PowerShell](mimikatz-ejecucion-powershell.png)
 
 ---
 
@@ -50,17 +50,17 @@ index=* sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=
 
 **Resultado: 3 eventos detectados**, correspondientes a las ejecuciones del binario durante el ejercicio.
 
-![Resultados de búsqueda en Splunk — 3 eventos de mimikatz.exe](images/splunk-mimikatz-eventcode1.png)
+![Resultados de búsqueda en Splunk — 3 eventos de mimikatz.exe](splunk-mimikatz-eventcode1.png)
 
 ### 4.2 Detalle del evento expandido
 
 Los campos clave del evento confirman la actividad maliciosa:
 
-![Detalle del evento — campos principales](images/splunk-evento-detalle-1.png)
+![Detalle del evento — campos principales](splunk-evento-detalle-1.png)
 
-![Detalle del evento — proceso padre y usuario](images/splunk-evento-detalle-2.png)
+![Detalle del evento — proceso padre y usuario](splunk-evento-detalle-2.png)
 
-![Detalle del evento — metadata completa](images/splunk-evento-detalle-3.png)
+![Detalle del evento — metadata completa](splunk-evento-detalle-3.png)
 
 ---
 
@@ -95,9 +95,9 @@ Nota: Las protecciones modernas de Windows 11 (RunAsPPL con valor 2, que activa 
 
 ## 7. Alerta configurada
 
-![Confirmación de alerta guardada en Splunk](images/splunk-alerta-guardada-confirmacion.png)
+![Confirmación de alerta guardada en Splunk](splunk-alerta-guardada-confirmacion.png)
 
-![Detalle de la alerta configurada](images/splunk-alerta-detalle.png)
+![Detalle de la alerta configurada](splunk-alerta-detalle.png)
 
 - **Nombre:** Posible Credential Dumping - LSASS Access
 - **Descripción:** Detecta ejecución de mimikatz.exe vía Sysmon EventCode 1 — T1003.001
