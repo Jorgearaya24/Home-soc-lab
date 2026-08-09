@@ -41,18 +41,18 @@ sekurlsa::logonpasswords
 
 ## 4. Detección en Splunk
 
-### 4.1 Búsqueda por nombre de proceso (EventCode 1 — Process Create)
+### Búsqueda por nombre de proceso (EventCode 1 — Process Create)
 
 Búsqueda utilizada:
 ```
 index=* sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 Image="*mimikatz*"
 ```
 
-**Resultado: 3 eventos detectados**, correspondientes a las ejecuciones del binario durante el ejercicio.
+**Resultado: 3 eventos detectados**
 
 ![Resultados de búsqueda en Splunk — 3 eventos de mimikatz.exe](splunk-mimikatz-eventcode1.png)
 
-### 4.2 Detalle del evento expandido
+### Detalle del Evento escogido
 
 Los campos clave del evento confirman la actividad maliciosa:
 
@@ -73,7 +73,7 @@ El campo clave que confirma la actividad maliciosa es la combinación de:
 - **`IntegrityLevel`:** `High` — ejecutado con privilegios elevados (Administrador), condición necesaria para acceder a la memoria de LSASS
 - **`ParentUser`:** `SOC-VICTIM-WIN1\vboxuser` — la cuenta comprometida que ejecutó el ataque
 
-El proceso padre `powershell.exe` lanzando `mimikatz.exe` con nivel de integridad High es un patrón anómalo claro: un proceso legítimo del sistema no tiene razón para llamar a un ejecutable con ese nombre, firma digital de `gentilkiwi`, desde un directorio no estándar como `C:\Tools\`.
+El proceso padre `powershell.exe` lanzando `mimikatz.exe` con nivel de integridad High es un patrón desconocido claro: un proceso legítimo del sistema no tiene razón para llamar a un ejecutable con ese nombre, firma digital de `gentilkiwi`, desde un directorio no estándar como `C:\Tools\`.
 
 Nota: Las protecciones modernas de Windows 11 (RunAsPPL con valor 2, que activa protección a nivel UEFI) bloquearon el volcado directo de credenciales desde LSASS. Sin embargo, la ejecución del binario sí quedó completamente registrada por Sysmon (EventCode 1), que es suficiente evidencia de detección para un SOC — en un entorno real, la alerta dispararía una respuesta antes de que el atacante tuviera oportunidad de sortear estas protecciones.
 
