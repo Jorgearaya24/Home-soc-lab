@@ -6,13 +6,13 @@
 
 ---
 
-## Resumen
+### Resumen
 
 Simulé un ataque de robo de credenciales usando Mimikatz contra una VM Windows en un entorno de lab aislado (VirtualBox) Configuré Sysmon como fuente de telemetría y Splunk como SIEM para detectar la ejecución del binario, técnica documentada como **T1003.001 (OS Credential Dumping: LSASS Memory)** en MITRE ATT&CK. Logré detectar el ataque mediante una búsqueda en Splunk sobre eventos de Sysmon (EventCode 1 — Process Create), identificando la ejecución de `mimikatz.exe` lanzada desde `powershell.exe` con nivel de integridad High.
 
 ---
 
-## Entorno del lab
+### Entorno del lab
 
 - **Víctima:** Windows (VM VirtualBox) — Hostname: `SOC-Victim-Win1`
 - **SIEM:** Splunk Enterprise, instalado en el host
@@ -21,7 +21,7 @@ Simulé un ataque de robo de credenciales usando Mimikatz contra una VM Windows 
 
 ---
 
-## Ejecución del ataque
+### Ejecución del ataque
 
 Mimikatz fue descargado desde el repositorio oficial (`gentilkiwi/mimikatz` en GitHub, release v2.2.0) y ejecutado desde PowerShell con privilegios de Administrador.
 
@@ -39,14 +39,13 @@ sekurlsa::logonpasswords
 
 ---
 
-## Detección en Splunk
+### Detección en Splunk
 
 ### Búsqueda por nombre de proceso (EventCode 1 — Process Create)
 
 Búsqueda utilizada:
-```
-index=* sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 Image="*mimikatz*"
-```
+
+`index=* sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 Image="*mimikatz*"`
 
 **Resultado: 3 eventos detectados**
 
@@ -64,7 +63,7 @@ Los campos clave del evento confirman la actividad maliciosa:
 
 ---
 
-## Análisis
+### Análisis
 
 El campo clave que confirma la actividad maliciosa es la combinación de:
 
@@ -79,7 +78,7 @@ Nota: Las protecciones modernas de Windows 11 (RunAsPPL con valor 2, que activa 
 
 ---
 
-## Indicadores de Compromiso (IOC)
+### Indicadores de Compromiso (IOC)
 
 - Nombre de proceso  `mimikatz.exe` 
 - Ruta  `C:\Tools\mimikatz_trunk\x64\mimikatz.exe`
@@ -91,7 +90,7 @@ Nota: Las protecciones modernas de Windows 11 (RunAsPPL con valor 2, que activa 
 
 ---
 
-## Alerta configurada
+### Alerta configurada
 
 ![Confirmación de alerta guardada en Splunk](splunk-alerta-guardada-confirmacion.png)
 
@@ -108,7 +107,7 @@ Nota: Las protecciones modernas de Windows 11 (RunAsPPL con valor 2, que activa 
 
 ---
 
-## Remediación
+### Remediación
 
 - Aislar el equipo comprometido (`SOC-Victim-Win1`) de la red inmediatamente
 - Resetear credenciales del usuario afectado (`vboxuser`) y cualquier otra cuenta con sesión activa en el equipo al momento del ataque
@@ -118,7 +117,7 @@ Nota: Las protecciones modernas de Windows 11 (RunAsPPL con valor 2, que activa 
 
 ---
 
-## Lecciones aprendidas
+### Lecciones aprendidas
 
 **Lo que más sorprendió:** La cantidad de capas de seguridad que tienen los sistemas operativos modernos para proteger los datos del usuario. Windows Defender, SmartScreen, RunAsPPL, Tamper Protection — cada una actúa de forma independiente y en conjunto forman una defensa mucho más sólida de lo que se aprecia desde afuera. Incluso con acceso de Administrador y el antivirus desactivado, el sistema siguió resistiendo el ataque en varios puntos. Esto cambia la perspectiva sobre lo que realmente implica comprometer un sistema moderno.
 
