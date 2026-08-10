@@ -6,22 +6,22 @@
 
 ---
 
-## 1. Resumen
+## Resumen
 
-Simulé un ataque de robo de credenciales usando Mimikatz (v2.2.0) contra una VM Windows en un entorno de lab aislado (VirtualBox, red Host-only). Configuré Sysmon como fuente de telemetría y Splunk como SIEM para detectar la ejecución del binario, técnica documentada como **T1003.001 (OS Credential Dumping: LSASS Memory)** en MITRE ATT&CK. Logré detectar el ataque mediante una búsqueda en Splunk sobre eventos de Sysmon (EventCode 1 — Process Create), identificando la ejecución de `mimikatz.exe` lanzada desde `powershell.exe` con nivel de integridad High.
+Simulé un ataque de robo de credenciales usando Mimikatz contra una VM Windows en un entorno de lab aislado (VirtualBox) Configuré Sysmon como fuente de telemetría y Splunk como SIEM para detectar la ejecución del binario, técnica documentada como **T1003.001 (OS Credential Dumping: LSASS Memory)** en MITRE ATT&CK. Logré detectar el ataque mediante una búsqueda en Splunk sobre eventos de Sysmon (EventCode 1 — Process Create), identificando la ejecución de `mimikatz.exe` lanzada desde `powershell.exe` con nivel de integridad High.
 
 ---
 
-## 2. Entorno del lab
+## Entorno del lab
 
 - **Víctima:** Windows (VM VirtualBox) — Hostname: `SOC-Victim-Win1`
-- **SIEM:** Splunk Enterprise (Free), instalado en el host
+- **SIEM:** Splunk Enterprise, instalado en el host
 - **Fuente de telemetría:** Sysmon (config: SwiftOnSecurity) + Splunk Universal Forwarder
-- **Red:** VirtualBox Host-only (aislada de la red doméstica)
+- **Red:** VirtualBox (aislada de la red doméstica)
 
 ---
 
-## 3. Ejecución del ataque
+## Ejecución del ataque
 
 Mimikatz fue descargado desde el repositorio oficial (`gentilkiwi/mimikatz` en GitHub, release v2.2.0) y ejecutado desde PowerShell con privilegios de Administrador.
 
@@ -39,7 +39,7 @@ sekurlsa::logonpasswords
 
 ---
 
-## 4. Detección en Splunk
+## Detección en Splunk
 
 ### Búsqueda por nombre de proceso (EventCode 1 — Process Create)
 
@@ -64,7 +64,7 @@ Los campos clave del evento confirman la actividad maliciosa:
 
 ---
 
-## 5. Análisis
+## Análisis
 
 El campo clave que confirma la actividad maliciosa es la combinación de:
 
@@ -73,27 +73,25 @@ El campo clave que confirma la actividad maliciosa es la combinación de:
 - **`IntegrityLevel`:** `High` — ejecutado con privilegios elevados (Administrador), condición necesaria para acceder a la memoria de LSASS
 - **`ParentUser`:** `SOC-VICTIM-WIN1\vboxuser` — la cuenta comprometida que ejecutó el ataque
 
-El proceso padre `powershell.exe` lanzando `mimikatz.exe` con nivel de integridad High es un patrón desconocido claro: un proceso legítimo del sistema no tiene razón para llamar a un ejecutable con ese nombre, firma digital de `gentilkiwi`, desde un directorio no estándar como `C:\Tools\`.
+El proceso padre `powershell.exe` lanzando `mimikatz.exe` con nivel de integridad High es un patrón desconocido claro, un proceso legítimo del sistema no tiene razón para llamar a un ejecutable con ese nombre, firma digital de `gentilkiwi`, desde un directorio no estándar como `C:\Tools\`.
 
 Nota: Las protecciones modernas de Windows 11 (RunAsPPL con valor 2, que activa protección a nivel UEFI) bloquearon el volcado directo de credenciales desde LSASS. Sin embargo, la ejecución del binario sí quedó completamente registrada por Sysmon (EventCode 1), que es suficiente evidencia de detección para un SOC — en un entorno real, la alerta dispararía una respuesta antes de que el atacante tuviera oportunidad de sortear estas protecciones.
 
 ---
 
-## 6. Indicadores de Compromiso (IOC)
+## Indicadores de Compromiso (IOC)
 
-| Tipo | Valor |
-|---|---|
-| Nombre de proceso | `mimikatz.exe` |
-| Ruta | `C:\Tools\mimikatz_trunk\x64\mimikatz.exe` |
-| Hash MD5 | `29EFD64DD3C7FE1E2B022B7AD73A1BA5` |
-| Hash SHA256 | `61C0810A23580CF492A6BA4F7654566108331E7A4134C968C2D6A05261B2D8A1` |
-| Proceso padre | `powershell.exe` |
-| Usuario | `SOC-VICTIM-WIN1\vboxuser` |
-| Técnica MITRE ATT&CK | T1003.001 — OS Credential Dumping: LSASS Memory |
+- Nombre de proceso  `mimikatz.exe` 
+- Ruta  `C:\Tools\mimikatz_trunk\x64\mimikatz.exe`
+- Hash MD5  `29EFD64DD3C7FE1E2B022B7AD73A1BA5` 
+- Hash SHA256  `61C0810A23580CF492A6BA4F7654566108331E7A4134C968C2D6A05261B2D8A1`
+- Proceso padre  `powershell.exe`
+- Usuario  `SOC-VICTIM-WIN1\vboxuser`
+- Técnica  `MITRE ATT&CK T1003.001 — OS Credential Dumping: LSASS Memory`
 
 ---
 
-## 7. Alerta configurada
+## Alerta configurada
 
 ![Confirmación de alerta guardada en Splunk](splunk-alerta-guardada-confirmacion.png)
 
@@ -110,7 +108,7 @@ Nota: Las protecciones modernas de Windows 11 (RunAsPPL con valor 2, que activa 
 
 ---
 
-## 8. Remediación
+## Remediación
 
 - Aislar el equipo comprometido (`SOC-Victim-Win1`) de la red inmediatamente
 - Resetear credenciales del usuario afectado (`vboxuser`) y cualquier otra cuenta con sesión activa en el equipo al momento del ataque
@@ -120,7 +118,7 @@ Nota: Las protecciones modernas de Windows 11 (RunAsPPL con valor 2, que activa 
 
 ---
 
-## 9. Lecciones aprendidas
+## Lecciones aprendidas
 
 **Lo que más sorprendió:** La cantidad de capas de seguridad que tienen los sistemas operativos modernos para proteger los datos del usuario. Windows Defender, SmartScreen, RunAsPPL, Tamper Protection — cada una actúa de forma independiente y en conjunto forman una defensa mucho más sólida de lo que se aprecia desde afuera. Incluso con acceso de Administrador y el antivirus desactivado, el sistema siguió resistiendo el ataque en varios puntos. Esto cambia la perspectiva sobre lo que realmente implica comprometer un sistema moderno.
 
