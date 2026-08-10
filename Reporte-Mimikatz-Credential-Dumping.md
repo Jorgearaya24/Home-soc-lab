@@ -26,10 +26,9 @@ Simulé un ataque de robo de credenciales usando Mimikatz contra una VM Windows 
 Mimikatz fue descargado desde el repositorio oficial (`gentilkiwi/mimikatz` en GitHub, release v2.2.0) y ejecutado desde PowerShell con privilegios de Administrador.
 
 **Comandos ejecutados:**
-```
-privilege::debug
-sekurlsa::logonpasswords
-```
+
+- `privilege::debug`
+- `sekurlsa::logonpasswords`
 
 **Hora de ejecución:** 2026-08-07 21:06:24 UTC  
 **Usuario:** `SOC-VICTIM-WIN1\vboxuser`  
