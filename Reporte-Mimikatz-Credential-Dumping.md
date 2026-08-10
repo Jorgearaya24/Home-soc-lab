@@ -41,7 +41,7 @@ sekurlsa::logonpasswords
 
 ### Detección en Splunk
 
-### Búsqueda por nombre de proceso (EventCode 1 — Process Create)
+### Búsqueda por nombre de proceso (EventCode 1 Process Create)
 
 Búsqueda utilizada:
 
