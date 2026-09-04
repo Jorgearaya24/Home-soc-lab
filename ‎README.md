@@ -58,8 +58,7 @@ Los campos clave del evento confirman la actividad maliciosa:
 
 ![Detalle del evento — proceso padre y usuario](images/splunk-evento-detalle-2.png)
 
-![Detalle del evento — metadata completa](images/splunk-evento-detalle-3.png)
-
+![Detalle del evento - metadata completa](images/splunk-evento-detalle-3.png.png)
 ---
 
 ### Análisis
