@@ -34,8 +34,7 @@ Mimikatz fue descargado desde el repositorio oficial (`gentilkiwi/mimikatz` en G
 **Usuario:** `SOC-VICTIM-WIN1\vboxuser`  
 **Proceso padre:** `C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe`
 
-![Ejecución de Mimikatz en PowerShell](mimikatz-ejecucion-powershell.png)
-
+![Ejecución de Mimikatz en PowerShell](imágenes/mimikatz-ejecucion-powershell.png)
 ---
 
 ### Detección en Splunk
@@ -48,17 +47,17 @@ Búsqueda utilizada:
 
 **Resultado: 3 eventos detectados**
 
-![Resultados de búsqueda en Splunk — 3 eventos de mimikatz.exe](splunk-mimikatz-eventcode1.png)
+![Resultados de búsqueda en Splunk — 3 eventos de mimikatz.exe](imágenes/splunk-mimikatz-eventcode1.png)
 
 ### Detalle del Evento escogido
 
 Los campos clave del evento confirman la actividad maliciosa:
 
-![Detalle del evento — campos principales](splunk-evento-detalle-1.png)
+![Detalle del evento — campos principales](imágenes/splunk-evento-detalle-1.png)
 
-![Detalle del evento — proceso padre y usuario](splunk-evento-detalle-2.png)
+![Detalle del evento — proceso padre y usuario](imágenes/splunk-evento-detalle-2.png)
 
-![Detalle del evento — metadata completa](splunk-evento-detalle-3.png)
+![Detalle del evento — metadata completa](imágenes/splunk-evento-detalle-3.png)
 
 ---
 
